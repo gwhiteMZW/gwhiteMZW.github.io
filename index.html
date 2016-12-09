@@ -3,9 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <title>梅志伟的个人简历</title>
-    <script src="js/jquery-3.1.1 (1).js"></script>
-    <script src="js/movingGallery.js"></script>
-    <link rel="stylesheet" href="css/mycss.css">
+    <style>
+        body{
+
+        margin: 0;
+        font-family: Arial,Verdana,Sans-serif;
+        color: white;
+        background:center top  no-repeat;
+    }
+
+
+    .about-me{
+        text-align: center;
+    }
+    .book-frame{
+        transform-style: preserve-3d;
+        border: solid 1px white;
+        width: 90%;
+        height: 900px;
+        position: relative;
+        margin: 20px auto auto auto;
+        perspective: 1960px;
+        -webkit-perspective: 1960px;
+    }
+    img{
+        width: 100%;
+        height: 100%;
+    }
+    .book{
+        transform-style: preserve-3d;
+        -webkit-transform: rotateX(35deg);
+        -moz-transform: rotateX(35deg);
+        -ms-transform: rotateX(35deg);
+        -o-transform: rotateX(35deg);
+        transform: rotateX(35deg);
+        margin:auto;
+        -webkit-transition: transform 1s;
+        -moz-transition: transform 1s;
+        -ms-transition: transform 1s;
+        -o-transition: transform 1s;
+        transition: transform 1s;
+        width: 70%;
+        height: 90%;
+        z-index: 0;
+
+    }
+    .page{
+        box-shadow: rgba(0,0,0,0.1) 0 2px 12px 1px;
+        transition: transform 0.6s;
+        transform-origin: left;
+        position: absolute;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+    }
+
+    .page-front{
+
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    .page-back{
+        transform: rotateY(180deg);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+    }
+    .works{
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .pic{
+        background-color: white;
+        box-shadow: rgba(0,0,0,0.2) 0 2px 12px 1px;
+        left: 20%;
+        top: 30%;
+        border: white 5px solid;
+        position: absolute;
+        -webkit-transition: left  0.6s,top 0.6s,-webkit-transform 0.6s;
+        -moz-transition: left 0.6s,top 0.6s,-moz-transform 0.6s;
+        -ms-transition: left 0.6s,top 0.6s,-ms-transform 0.6s;
+        -o-transition: left 0.6s,top 0.6s,-o-transform 0.6s;
+        transition: left 0.6s,top 0.6s,transform 0.6s;
+    }
+    .pic:hover{
+        box-shadow: white 0 2px 12px 1px;
+
+    }
+    </style>
+    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+    <script >$(document).ready(function () {
+        var pages={
+            pagesArr:[],
+            index:0,
+            deg:-179,
+            switchPage:function(direction){
+                if(direction==="next"){
+                    return function () {
+                        if(pages.index<pages.pagesArr.length){
+                            $("#"+pages.pagesArr[pages.index]).css("transform","rotateY("+pages.deg+"deg)");
+                            setTimeout((function (index) {
+                                return function () {
+                                    $("#"+pages.pagesArr[index]+" "+".page-front").css("visibility","hidden");
+                                }
+                            })(pages.index),200);
+                            pages.index++;
+                            pages.deg+=1;
+
+
+                        }
+                    }
+
+                }
+                else if(direction==="pre")
+                    return function () {
+                        if(pages.index>0){
+                            $("#"+pages.pagesArr[pages.index-1]).css("transform","rotateY(0deg)");
+                            setTimeout((function (index) {
+                                return function () {
+                                    $("#"+pages.pagesArr[index-1]+" "+".page-front").css("visibility","visible");
+                                }
+                            })(pages.index),200);
+                            pages.index--;
+                            pages.deg-=1;
+                        }
+                    };
+            },
+            addPages:function () {
+                $(".page").each(function () {
+                    pages.pagesArr.push(this.id);
+                })
+            }
+        };
+        pages.addPages();
+        pages.pagesArr.reverse();
+        $("#next").click(pages.switchPage("next"));
+        $("#pre").click(pages.switchPage("pre"));
+
+        var timer=0;
+        setInterval(function () {
+            if(timer>1000){
+                timer=0;
+            }
+            timer+=2;
+        },400);
+        var scrollFunc = function (e) {
+            e = e || window.event;
+            if (e.wheelDelta&&timer>=2) {  
+                if (e.wheelDelta >0) { 
+                    pages.switchPage("pre")();
+                }
+                if (e.wheelDelta <0) { 
+                    pages.switchPage("next")();
+                }
+                timer=0;
+            } else if (e.detail&&timer>=2) {  
+                if (e.detail> 0) { 
+                    alert("滑轮向上滚动");
+                }
+                if (e.detail< 0) { 
+                    alert("滑轮向下滚动");
+                }
+                timer=0;
+            }
+        };
+        window.onmousewheel = document.onmousewheel = scrollFunc;
+
+        setTimeout(function () {
+            allAnim();
+            $(".pic").click(pickedAmin);
+        },1000);
+        function pickedAmin() {
+            allAnim();
+            $(this).css("-o-transform","rotate(0deg)")
+                    .css("transform","rotate(0deg)")
+                    .css("-webkit-transform","rotate(0deg)")
+                    .css("-moz-transform","rotate(0deg)")
+                    .css("-ms-transform","rotate(0deg)")
+                    .css("left",150)
+                    .css("top",100)
+                    .css("z-index",1);
+        }
+        function allAnim() {
+            $(".pic").each(function () {
+                var randomL=Math.round(Math.random()*5)*123-50;
+                var randomT=Math.round(Math.random()*5)*120-50;
+                var randomDeg=Math.floor(Math.random()*90);
+                $(this).css("left",randomL)
+                        .css("top",randomT)
+                        .css("transform","rotate("+randomDeg+"deg)")
+                        .css("-webkit-transform","rotate("+randomDeg+"deg)")
+                        .css("-moz-transform","rotate("+randomDeg+"deg)")
+                        .css("-ms-transform","rotate("+randomDeg+"deg)")
+                        .css("-o-transform","rotate("+randomDeg+"deg)")
+                        .css("z-index",0)
+            });
+        }
+
+    });</script>
 </head>
 <body>
 <div class="content">
@@ -50,7 +250,7 @@
                                 <img src="http://imglf0.nosdn.127.net/img/RUUrRzEvMkdlenV3SytnN0owRU5ROTd3cktGZnVqK1lEYjI2VEw0QTJmTDJyeDlqYjV4Smx3PT0.png?imageView&thumbnail=500x0&quality=96&stripmeta=0&type=jpg" alt="">
 
                             </div>
-                            <h2 style="text-align: right; margin-top:100%;z-index:2 ">try click them !</h2>
+
                         </div>
                     </div>
                 </div>
